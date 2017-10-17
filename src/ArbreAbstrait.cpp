@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <typeinfo>
 #include "ArbreAbstrait.h"
 #include "Symbole.h"
 #include "SymboleValue.h"
@@ -89,12 +90,27 @@ int NoeudOperateurBinaire::executer() {
 // NoeudInstSi
 ////////////////////////////////////////////////////////////////////////////////
 
-NoeudInstSi::NoeudInstSi(Noeud* condition, Noeud* sequence) :
-        m_condition(condition), m_sequence(sequence) {
+NoeudInstSi::NoeudInstSi(Noeud* condition, Noeud* sequence) {
+    ajoute(condition);
+    ajoute(sequence);
 }
 
 int NoeudInstSi::executer() {
-    if (m_condition->executer())
-        m_sequence->executer();
+    unsigned var = 0;
+    for (var = 0; var < conditions.size() && !conditions.at(var)->executer(); ++var) {
+    }
+    if (conditions.at(var - 1)->executer())
+        seqIntructions.at(var - 1)->executer(); //TODO complete for all if block
+    else if (seqIntructions.size() > conditions.size()) {
+        seqIntructions.at(var)->executer(); //TODO complete for all if block
+    }
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstSi::ajoute(Noeud* instruction) {
+    if (typeid(*instruction) == typeid(NoeudSeqInst)) {
+        seqIntructions.push_back(instruction);
+    } else {
+        conditions.push_back(instruction);
+    }
 }

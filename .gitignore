@@ -3,6 +3,10 @@
 .settings
 .cproject
 
+#doxyfiles
+html
+latex
+
 # Prerequisites
 *.d
 

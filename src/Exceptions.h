@@ -13,7 +13,6 @@
 #include <string>
 
 using namespace std;
-
 // Classe mère de toutes les exceptions de l'interpréteur
 class InterpreteurException: public exception {
 public:
@@ -30,7 +29,7 @@ public:
             f() {
         this->f << f;
     }
-    
+
     char const * what() const throw () {
         f << " -> Ouverture Fichier Impossible";
         return f.str().c_str();
@@ -39,7 +38,7 @@ public:
 
 class SyntaxeException: public InterpreteurException {
 public:
-    SyntaxeException(char const * message = NULL) :
+    SyntaxeException(char const * message = nullptr) :
             m_message(message) {
     }
     char const * what() const throw () {

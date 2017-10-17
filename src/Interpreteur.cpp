@@ -68,11 +68,13 @@ Noeud* Interpreteur::inst() {
         Noeud *affect = affectation();
         testerEtAvancer(";");
         return affect;
-    } else if (m_lecteur.getSymbole() == "si")
+    } else if (m_lecteur.getSymbole() == "si") {
         return instSi();
-    // Compléter les alternatives chaque fois qu'on rajoute une nouvelle instruction
-    else
+        // Compléter les alternatives chaque fois qu'on rajoute une nouvelle instruction
+    } else {
         erreur("Instruction incorrecte");
+    }
+    return nullptr;
 }
 
 Noeud* Interpreteur::affectation() {
@@ -134,15 +136,22 @@ Noeud* Interpreteur::instSi() {
     Noeud* condition = expression(); // On mémorise la condition
     testerEtAvancer(")");
     Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
-    NoeudInstSi noeudSi = new NoeudInstSi(condition, sequence); //create the node for if (basic)
-            
-    while (m_lecteur.getSymbole() == "sinonsi") { // the sinonsi sequence
-    
+    Noeud *noeudSi = new NoeudInstSi(condition, sequence); //create the node for if (basic)
+
+    // le sinonsi sequence
+    while (m_lecteur.getSymbole() == "sinonsi") {
+        testerEtAvancer("sinonsi");
+        testerEtAvancer("(");
+        noeudSi->ajoute(expression()); // On mémorise la condition
+        testerEtAvancer(")");
+        noeudSi->ajoute(seqInst());     // On mémorise la séquence d'instruction
     }
+    // le sinon
     if (m_lecteur.getSymbole() == "sinon") {
-        Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+        testerEtAvancer("sinon");
+        noeudSi->ajoute(seqInst());     // On mémorise la séquence d'instruction
     }
     testerEtAvancer("finsi");
-return noeudSi // Et on renvoie un noeud Instruction Si
+    return noeudSi; // Et on renvoie un noeud Instruction Si
 }
 

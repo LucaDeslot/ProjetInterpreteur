@@ -35,7 +35,7 @@ public:
     } // A cause du destructeur virtuel de la classe Noeud
     int executer();    // Exécute chaque instruction de la séquence
     void ajoute(Noeud* instruction);  // Ajoute une instruction à la séquence
-            
+
 private:
     vector<Noeud *> m_instructions; // pour stocker les instructions de la séquence
 };
@@ -49,7 +49,7 @@ public:
     ~NoeudAffectation() {
     } // A cause du destructeur virtuel de la classe Noeud
     int executer();        // Exécute (évalue) l'expression et affecte sa valeur à la variable
-    
+
 private:
     Noeud* m_variable;
     Noeud* m_expression;
@@ -65,7 +65,7 @@ public:
     ~NoeudOperateurBinaire() {
     } // A cause du destructeur virtuel de la classe Noeud
     int executer();            // Exécute (évalue) l'opération binaire)
-    
+
 private:
     Symbole m_operateur;
     Noeud* m_operandeGauche;
@@ -81,11 +81,22 @@ public:
     // Construit une "instruction si" avec sa condition et sa séquence d'instruction
     ~NoeudInstSi() {
     } // A cause du destructeur virtuel de la classe Noeud
+    void ajoute(Noeud* instruction);
     int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence
-    
+
 private:
-    Noeud* m_condition;
-    Noeud* m_sequence;
+    /**
+     * all conditions of if/elseif : match with the seqInstructions
+     * @note conditions.at(i) match with seqInstructions.at(i)
+     * @details if the size of seqInstructions is bigger by 1 than the conditions size the last seqInstruction is for else
+     */
+    vector<Noeud*> conditions;
+    /** \ref conditions
+     * all conditions of if/elseif : match with the conditions
+     * @note conditions.at(i) match with seqInstructions.at(i)
+     * @details if the size of seqInstructions is bigger by 1 than the conditions size the last seqInstruction is for else
+     */
+    vector<Noeud*> seqIntructions;
 };
 
 #endif /* ARBREABSTRAIT_H */
