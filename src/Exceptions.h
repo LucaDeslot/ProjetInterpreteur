@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   Exceptions.h
  * Author: martin
  *
@@ -7,54 +7,65 @@
 
 #ifndef EXCEPTIONS_H
 #define	EXCEPTIONS_H
-#include <exception>
+
+#include <bits/exception.h>
+#include <sstream>
 #include <string>
+
 using namespace std;
 
 // Classe mère de toutes les exceptions de l'interpréteur
-class InterpreteurException : public exception {
+class InterpreteurException: public exception {
 public:
-    const char * what() const throw() {
+    char const * what() const throw () {
         return "Exception Interpreteur";
     }
 };
 
-class FichierException : public InterpreteurException {
+class FichierException: public InterpreteurException {
+private:
+    mutable stringstream f;
 public:
-    const char * what() const throw() {
-        return "Ouverture Fichier Impossible";
+    FichierException(string f = "") :
+            f() {
+        this->f << f;
+    }
+    
+    char const * what() const throw () {
+        f << " -> Ouverture Fichier Impossible";
+        return f.str().c_str();
     }
 };
 
-class SyntaxeException : public InterpreteurException {
+class SyntaxeException: public InterpreteurException {
 public:
-    SyntaxeException(const char * message = NULL) : m_message(message) {}
-    const char * what() const throw() {
+    SyntaxeException(char const * message = NULL) :
+            m_message(message) {
+    }
+    char const * what() const throw () {
         return m_message;
     }
-private :
-    const char* m_message;
+private:
+    char const * m_message;
 };
 
-
-class IndefiniException : public InterpreteurException {
+class IndefiniException: public InterpreteurException {
 public:
-    const char * what() const throw() {
+    char const * what() const throw () {
         return "Valeur Indéfinie";
     }
 };
 
-
-class DivParZeroException : public InterpreteurException {
+class DivParZeroException: public InterpreteurException {
 public:
-    const char * what() const throw() {
+    char const * what() const throw () {
         return "Division par 0";
     }
 };
 
-class OperationInterditeException : public InterpreteurException {
+class OperationInterditeException: public InterpreteurException {
 public:
-    const char * what() const throw() {
+    char const * what() const throw () {
         return "Operation Interdite sur un noeud";
     }
 };
