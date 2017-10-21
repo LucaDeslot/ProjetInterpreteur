@@ -55,6 +55,13 @@ public:
     }
 };
 
+class IndefiniEscapeCharException {
+public:
+    char const * what() const throw () {
+        return "Escape code non défini !";
+    }
+};
+
 class DivParZeroException: public InterpreteurException {
 public:
     char const * what() const throw () {

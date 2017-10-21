@@ -81,7 +81,7 @@ public:
     // Construit une "instruction si" avec sa condition et sa séquence d'instruction
     ~NoeudInstSi() {
     } // A cause du destructeur virtuel de la classe Noeud
-    void ajoute(Noeud* instruction);
+    void ajoute(Noeud* instruction) override;
     int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence
 
 private:
@@ -91,12 +91,68 @@ private:
      * @details if the size of seqInstructions is bigger by 1 than the conditions size the last seqInstruction is for else
      */
     vector<Noeud*> conditions;
+
     /** \ref conditions
      * all conditions of if/elseif : match with the conditions
      * @note conditions.at(i) match with seqInstructions.at(i)
      * @details if the size of seqInstructions is bigger by 1 than the conditions size the last seqInstruction is for else
      */
     vector<Noeud*> seqIntructions;
+};
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstTantQue: public Noeud {
+public:
+    NoeudInstTantQue(Noeud* condition, Noeud* seqInst);
+    ~NoeudInstTantQue() {
+    }
+    virtual int executer() override;
+protected:
+    Noeud* condition;
+    Noeud* seqInst;
+};
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstRepeter: public NoeudInstTantQue {
+public:
+    NoeudInstRepeter(Noeud* seqInst, Noeud* condition);
+    ~NoeudInstRepeter() {
+    }
+    virtual int executer() override;
+private:
+};
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstPour: public NoeudInstTantQue {
+public:
+    NoeudInstPour(Noeud* condition, Noeud* seqInst, Noeud* affect1 = nullptr, Noeud* affect2 =
+            nullptr);
+    ~NoeudInstPour() {
+    }
+    int executer() override;
+private:
+    Noeud* affect1;
+    Noeud* affect2;
+};
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstEcrire: public Noeud {
+public:
+    NoeudInstEcrire(Noeud* exp);
+    ~NoeudInstEcrire() {
+    }
+    int executer() override;
+    void ajoute(Noeud* instruction) override;
+private:
+    vector<Noeud*> exps;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstLire: public Noeud {
+public:
+    NoeudInstLire(Noeud* var);
+    ~NoeudInstLire() {
+    }
+    int executer() override;
+    void ajoute(Noeud* var) override;
+private:
+    vector<Noeud*> vars;
 };
 
 #endif /* ARBREABSTRAIT_H */

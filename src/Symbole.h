@@ -18,7 +18,7 @@ public:
         return m_chaine;
     } // Accesseur
     friend ostream & operator <<(ostream & cout, Symbole const & symbole); // Fonction amie pour pouvoir afficher un symbole sur cout
-            
+
 private:
     enum m_categorie {
         MOTCLE, VARIABLE, ENTIER, CHAINE, INDEFINI, FINDEFICHIER

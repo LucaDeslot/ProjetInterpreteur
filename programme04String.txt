@@ -1,0 +1,11 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12+3;
+  j="";
+  si (i>14)
+    j="Superieur à 14";
+  finsi
+  ecrire("Hello", "World ", i, " est ", j);
+finproc
+# Commentaire Final

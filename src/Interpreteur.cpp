@@ -1,6 +1,10 @@
 #include "Interpreteur.h"
-#include <stdlib.h>
+#include "SymboleValue.h"
+
+#include <cstdio>
 #include <iostream>
+#include <string>
+
 using namespace std;
 
 Interpreteur::Interpreteur(ifstream & fichier) :
@@ -39,6 +43,11 @@ void Interpreteur::erreur(string const & message) const throw (SyntaxeException)
     throw SyntaxeException(messageWhat);
 }
 
+bool Interpreteur::isInst(Symbole symb) {
+    return symb == "<VARIABLE>" || symb == "si" || symb == "tantque" || symb == "repeter"
+            || symb == "pour" || symb == "ecrire" || symb == "lire";
+}
+
 Noeud* Interpreteur::programme() {
     // <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
     testerEtAvancer("procedure");
@@ -56,7 +65,7 @@ Noeud* Interpreteur::seqInst() {
     NoeudSeqInst* sequence = new NoeudSeqInst();
     do {
         sequence->ajoute(inst());
-    } while (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "si");
+    } while (isInst(m_lecteur.getSymbole()));
     // Tant que le symbole courant est un début possible d'instruction...
     // Il faut compléter cette condition chaque fois qu'on rajoute une nouvelle instruction
     return sequence;
@@ -70,7 +79,16 @@ Noeud* Interpreteur::inst() {
         return affect;
     } else if (m_lecteur.getSymbole() == "si") {
         return instSi();
-        // Compléter les alternatives chaque fois qu'on rajoute une nouvelle instruction
+    } else if (m_lecteur.getSymbole() == "tantque") {
+        return instTantQue();
+    } else if (m_lecteur.getSymbole() == "repeter") {
+        return instRepeter();
+    } else if (m_lecteur.getSymbole() == "pour") {
+        return instPour();
+    } else if (m_lecteur.getSymbole() == "ecrire") {
+        return instEcrire();
+    } else if (m_lecteur.getSymbole() == "lire") {
+        return instLire();
     } else {
         erreur("Instruction incorrecte");
     }
@@ -100,7 +118,7 @@ Noeud* Interpreteur::expression() {
         Symbole operateur = m_lecteur.getSymbole(); // On mémorise le symbole de l'opérateur
         m_lecteur.avancer();
         Noeud* factDroit = facteur(); // On mémorise l'opérande droit
-        fact = new NoeudOperateurBinaire(operateur, fact, factDroit); // Et on construuit un noeud opérateur binaire
+        fact = new NoeudOperateurBinaire(operateur, fact, factDroit); // Et on construit un noeud opérateur binaire
     }
     return fact; // On renvoie fact qui pointe sur la racine de l'expression
 }
@@ -108,8 +126,9 @@ Noeud* Interpreteur::expression() {
 Noeud* Interpreteur::facteur() {
     // <facteur> ::= <entier> | <variable> | - <facteur> | non <facteur> | ( <expression> )
     Noeud* fact = nullptr;
-    if (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "<ENTIER>") {
-        fact = m_table.chercheAjoute(m_lecteur.getSymbole()); // on ajoute la variable ou l'entier à la table
+    if (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "<ENTIER>"
+            || m_lecteur.getSymbole() == "<chaine>") {
+        fact = m_table.chercheAjoute(m_lecteur.getSymbole()); // on ajoute la variable ou l'entier ou le string à la table
         m_lecteur.avancer();
     } else if (m_lecteur.getSymbole() == "-") { // - <facteur>
         m_lecteur.avancer();
@@ -153,5 +172,83 @@ Noeud* Interpreteur::instSi() {
     }
     testerEtAvancer("finsi");
     return noeudSi; // Et on renvoie un noeud Instruction Si
+}
+
+Noeud* Interpreteur::instTantQue() {
+// <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque
+    testerEtAvancer("tantque");
+    testerEtAvancer("(");
+    Noeud* condition = expression(); // On mémorise la condition
+    testerEtAvancer(")");
+    Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+    testerEtAvancer("fintantque");
+    return new NoeudInstTantQue(condition, sequence);
+}
+
+Noeud* Interpreteur::instRepeter() {
+    testerEtAvancer("repeter");
+    Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+    testerEtAvancer("jusqua");
+    testerEtAvancer("(");
+    Noeud* condition = expression(); // On mémorise la condition
+    testerEtAvancer(")");
+    return new NoeudInstRepeter(sequence, condition);
+}
+
+Noeud* Interpreteur::instPour() {
+    Noeud* affect = nullptr;
+    Noeud* affect2 = nullptr;
+    testerEtAvancer("pour");
+    testerEtAvancer("(");
+    if (m_lecteur.getSymbole() == "<VARIABLE>") {
+        affect = affectation();
+    }
+    testerEtAvancer(";");
+    Noeud* condition = expression();
+    testerEtAvancer(";");
+    if (m_lecteur.getSymbole() == "<VARIABLE>") {
+        affect2 = affectation();
+    }
+
+    testerEtAvancer(")");
+    Noeud* inst = seqInst();
+    testerEtAvancer("finpour");
+    return new NoeudInstPour(condition, inst, affect, affect2);
+}
+
+Noeud* Interpreteur::instEcrire() {
+    testerEtAvancer("ecrire");
+    testerEtAvancer("(");
+    Noeud* instEcrire = new NoeudInstEcrire(expression());
+    while (m_lecteur.getSymbole() == ",") {
+        testerEtAvancer(",");
+        instEcrire->ajoute(expression());
+    }
+    testerEtAvancer(")");
+    testerEtAvancer(";");
+    return instEcrire;
+}
+
+/**
+ * this methods allow reading on standard input as cin (take only the first word of the line !)
+ * @return
+ */
+Noeud* Interpreteur::instLire() {
+    testerEtAvancer("lire");
+    testerEtAvancer("(");
+    tester("<VARIABLE>");
+    Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole());
+    m_lecteur.avancer();
+    Noeud* instLire = new NoeudInstLire(var);
+
+    while (m_lecteur.getSymbole() == ",") {
+        testerEtAvancer(",");
+        tester("<VARIABLE>");
+        instLire->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()));
+        m_lecteur.avancer();
+    }
+    testerEtAvancer(")");
+    testerEtAvancer(";");
+    return instLire;
 }
 
