@@ -32,7 +32,8 @@ public:
 
     char const * what() const throw () {
         f << " -> Ouverture Fichier Impossible";
-        return f.str().c_str();
+        string* str = new string(f.str().c_str());
+        return str->c_str();
     }
 };
 

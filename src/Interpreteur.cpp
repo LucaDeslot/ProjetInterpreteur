@@ -83,8 +83,19 @@ Noeud* Interpreteur::programme() {
 Noeud* Interpreteur::seqInst() {
     // <seqInst> ::= <inst> { <inst> }
     NoeudSeqInst* sequence = new NoeudSeqInst();
+    bool error = false;
     do {
-        sequence->ajoute(inst());
+        Noeud* noeud = inst();
+        if (!noeud) {
+            error = true;
+            if (sequence)
+                delete sequence;
+            sequence = nullptr;
+        }
+
+        if (!error) {
+            sequence->ajoute(noeud);
+        }
     } while (isInst(m_lecteur.getSymbole()));
     // Tant que le symbole courant est un début possible d'instruction...
     // Il faut compléter cette condition chaque fois qu'on rajoute une nouvelle instruction
@@ -114,7 +125,7 @@ Noeud* Interpreteur::inst() {
             erreur("Instruction incorrecte");
         }
     } catch (exception const &e) {
-        cout << e.what() << endl << endl;
+        cerr << e.what() << endl << endl;
         unsigned int line = m_lecteur.getLigne();
         while (m_lecteur.getSymbole() != "<FINDEFICHIER>" && m_lecteur.getLigne() == line) {
 //            cout << m_lecteur.getColonne() << " " << m_lecteur.getSymbole() << endl;
@@ -133,7 +144,7 @@ Noeud* Interpreteur::affectation() {
             tester("<VARIABLE>");
             var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table eton la mémorise
         } catch (exception e) {
-            cout << e.what() << endl << endl;
+            cerr << e.what() << endl << endl;
             m_lecteur.avancer();
             error = true;
         }
@@ -141,7 +152,7 @@ Noeud* Interpreteur::affectation() {
         try {
             testerEtAvancer("=");
         } catch (exception const &e) {
-            cout << e.what() << endl << endl;
+            cerr << e.what() << endl << endl;
             m_lecteur.avancer();
             error = true;
         }
@@ -150,7 +161,7 @@ Noeud* Interpreteur::affectation() {
             return new NoeudAffectation(var, exp); // On renvoie un noeud affectation
         }
     } catch (exception const &e) {
-        cout << e.what() << endl << endl;
+        cerr << e.what() << endl << endl;
     }
     return nullptr;
 }

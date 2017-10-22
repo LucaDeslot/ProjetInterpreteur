@@ -40,3 +40,4 @@ latex
 *.out
 *.app
 /Debug/
+/Testing/

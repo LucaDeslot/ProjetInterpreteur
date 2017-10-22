@@ -48,7 +48,7 @@ string Lecteur::motSuivant() {
             s = s + m_lecteurCar.getCaractere();
             m_lecteurCar.avancer();
         } while (isdigit(m_lecteurCar.getCaractere()));
-    
+
     else if (isalpha(m_lecteurCar.getCaractere()))
         // c'est le début d'un mot
         do {

@@ -55,7 +55,7 @@ bool Symbole::isMotCle(string const & s) const {
                 }
             }
         } else {
-            throw FichierException();
+            throw FichierException(FICHIER_MOTS_CLES);
         }
         fichier.close();
     }

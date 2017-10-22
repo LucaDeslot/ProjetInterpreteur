@@ -1,4 +1,8 @@
 #include "TableSymboles.h"
+#include "Symbole.h"
+
+#include <iterator>
+#include <string>
 
 TableSymboles::TableSymboles() :
         m_table() {
@@ -28,4 +32,14 @@ ostream & operator<<(ostream & cout, TableSymboles const & ts)
         cout << "  " << ts[i] << endl;
     cout << endl;
     return cout;
+}
+
+SymboleValue* TableSymboles::cherche(Symbole const & s) {
+    vector<SymboleValue*>::iterator i;
+    i = m_table.begin();
+    while (i < m_table.end() && (**i).getChaine() < s.getChaine())
+        i++;
+    if (i == m_table.end() || (**i).getChaine() != s.getChaine()) // si pas trouvé...
+        return nullptr;
+    return *i;
 }
