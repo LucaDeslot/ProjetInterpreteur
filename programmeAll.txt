@@ -1,0 +1,35 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12+3;
+  j=0;
+  delez = "Hey";
+  si (i==12)
+    i=10;
+  sinonsi (i==13)
+    j=5;
+  sinon
+    i=14;
+  finsi
+  
+  pour (i=0; i<3; i=i+1)
+    ecrire(i, "\n");
+  finpour
+  
+  tantque (i<15)
+    i=i+1;
+    ecrire("Entrer j : ");
+    lire(j);
+    ecrire("j = ",j, "\n");
+  fintantque
+  
+  i=10;
+  
+  repeter
+    i=i+1;
+    ecrire("Entrer j : ");
+    lire(j);
+    ecrire("i+1 = ", i+1, " j = ",j, "\n");
+  jusqua (i>=15)
+finproc
+# Commentaire Final

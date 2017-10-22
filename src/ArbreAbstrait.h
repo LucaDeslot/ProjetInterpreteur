@@ -18,6 +18,7 @@ class Noeud {
 // Remarque : la classe ne contient aucun constructeur
 public:
     virtual int executer() =0; // Méthode pure (non implémentée) qui rend la classe abstraite
+    virtual void traduitCpp(unsigned int ind, ostream& out = cout) = 0;
     virtual void ajoute(Noeud* instruction) {
         throw OperationInterditeException();
     }
@@ -34,6 +35,7 @@ public:
     ~NoeudSeqInst() {
     } // A cause du destructeur virtuel de la classe Noeud
     int executer();    // Exécute chaque instruction de la séquence
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
     void ajoute(Noeud* instruction);  // Ajoute une instruction à la séquence
 
 private:
@@ -49,7 +51,7 @@ public:
     ~NoeudAffectation() {
     } // A cause du destructeur virtuel de la classe Noeud
     int executer();        // Exécute (évalue) l'expression et affecte sa valeur à la variable
-
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     Noeud* m_variable;
     Noeud* m_expression;
@@ -65,7 +67,7 @@ public:
     ~NoeudOperateurBinaire() {
     } // A cause du destructeur virtuel de la classe Noeud
     int executer();            // Exécute (évalue) l'opération binaire)
-
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     Symbole m_operateur;
     Noeud* m_operandeGauche;
@@ -83,7 +85,7 @@ public:
     } // A cause du destructeur virtuel de la classe Noeud
     void ajoute(Noeud* instruction) override;
     int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence
-
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     /**
      * all conditions of if/elseif : match with the seqInstructions
@@ -106,6 +108,7 @@ public:
     ~NoeudInstTantQue() {
     }
     virtual int executer() override;
+    virtual void traduitCpp(unsigned int ind, ostream& out = cout) override;
 protected:
     Noeud* condition;
     Noeud* seqInst;
@@ -116,7 +119,8 @@ public:
     NoeudInstRepeter(Noeud* seqInst, Noeud* condition);
     ~NoeudInstRepeter() {
     }
-    virtual int executer() override;
+    int executer() override;
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +131,7 @@ public:
     ~NoeudInstPour() {
     }
     int executer() override;
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     Noeud* affect1;
     Noeud* affect2;
@@ -138,6 +143,7 @@ public:
     ~NoeudInstEcrire() {
     }
     int executer() override;
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
     void ajoute(Noeud* instruction) override;
 private:
     vector<Noeud*> exps;
@@ -150,6 +156,7 @@ public:
     ~NoeudInstLire() {
     }
     int executer() override;
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
     void ajoute(Noeud* var) override;
 private:
     vector<Noeud*> vars;

@@ -20,6 +20,7 @@ public:
     ~SymboleValue() {
     }
     int executer();         // exécute le SymboleValue (revoie sa valeur !)
+    void traduitCpp(unsigned int ind, ostream& out = cout) override;
 
     string getString() const;
     void setValeur(int valeur);

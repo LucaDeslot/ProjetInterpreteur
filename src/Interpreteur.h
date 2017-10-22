@@ -16,6 +16,7 @@ public:
                                         //   cette méthode se termine normalement et affiche un message "Syntaxe correcte".
                                         //   la table des symboles (ts) et l'arbre abstrait (arbre) auront été construits
                                         // Sinon, une exception sera levée
+    void traduitCpp(unsigned int ind, ostream& out);
 
     inline TableSymboles const & getTable() const {
         return m_table;

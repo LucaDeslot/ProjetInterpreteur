@@ -1,0 +1,13 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12;
+  repeter
+    i+1==i-1;
+    ecrire("Entrer j : ");
+    lire(j);
+    ecrire("i = ", i, " j = ",j, "\n");
+  jusqua (i<>=15)
+finpro
+zd
+# Commentaire Final

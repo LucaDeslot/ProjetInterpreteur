@@ -5,6 +5,10 @@
 #include <string>
 #include <typeinfo>
 
+void indent(unsigned int ind, ostream &out) {
+    out << setw(ind * 4) << "";
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudSeqInst
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,6 +21,17 @@ int NoeudSeqInst::executer() {
     for (unsigned int i = 0; i < m_instructions.size(); i++)
         m_instructions[i]->executer(); // on exécute chaque instruction de la séquence
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudSeqInst::traduitCpp(unsigned int ind, ostream& out) {
+    for (unsigned int i = 0; i < m_instructions.size(); i++) {
+        indent(ind, out);
+        m_instructions[i]->traduitCpp(ind, out); // on ecrit chaque instruction de la séquence
+        if (typeid(NoeudAffectation) == typeid(*m_instructions[i])) {
+            out << ";";
+        }
+        out << endl;
+    }
 }
 
 void NoeudSeqInst::ajoute(Noeud* instruction) {
@@ -42,6 +57,20 @@ int NoeudAffectation::executer() {
         ((SymboleValue*) m_variable)->setValeur(valeur); // On affecte la variable
     }
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudAffectation::traduitCpp(unsigned int ind, ostream& out) {
+    if (!((SymboleValue*) m_variable)->estDefini()) {
+        executer();
+        if (((SymboleValue*) m_variable)->isTypeOf(SymboleValue::VarType::STRING)) {
+            out << "string ";
+        } else {
+            out << "int ";
+        }
+    }
+    out << ((SymboleValue*) m_variable)->getChaine();
+    out << " = ";
+    ((SymboleValue*) m_expression)->traduitCpp(ind, out);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +125,17 @@ int NoeudOperateurBinaire::executer() {
     return valeur; // On retourne la valeur calculée
 }
 
+void NoeudOperateurBinaire::traduitCpp(unsigned int ind, ostream& out) {
+    if (m_operandeGauche != nullptr)
+        m_operandeGauche->traduitCpp(ind, out); // On évalue l'opérande gauche
+
+//    out << setw(ind) << "";
+    out << " " << m_operateur.getChaine() << " ";
+
+    if (m_operandeDroit != nullptr)
+        m_operandeDroit->traduitCpp(ind, out);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudInstSi
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +155,25 @@ int NoeudInstSi::executer() {
         seqIntructions.at(var)->executer();
     }
     return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstSi::traduitCpp(unsigned int ind, ostream& out) {
+    unsigned var = 0;
+    for (var = 0; var < conditions.size(); ++var) {
+        out << (var == 0 ? "" : "else ") << "if (";
+        conditions.at(var)->traduitCpp(ind, out);
+        out << ") {" << endl;
+        seqIntructions.at(var)->traduitCpp(ind + 1, out);
+        indent(ind, out);
+        out << "} ";
+    }
+    if (seqIntructions.size() > conditions.size()) { // sinon, on regarde si il y a un "sinon"
+        out << "else {" << endl;
+        seqIntructions.at(var)->traduitCpp(ind + 1, out);
+        indent(ind, out);
+        out << "}" << endl;
+    }
+
 }
 
 void NoeudInstSi::ajoute(Noeud* instruction) {
@@ -139,6 +198,14 @@ int NoeudInstTantQue::executer() {
     return 0;
 }
 
+void NoeudInstTantQue::traduitCpp(unsigned int ind, ostream& out) {
+    out << "while (";
+    condition->traduitCpp(ind, out);
+    out << ") {" << endl;
+    seqInst->traduitCpp(ind + 1, out);
+    indent(ind, out);
+    out << "}" << endl;
+}
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudInstRepeter
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,6 +218,15 @@ int NoeudInstRepeter::executer() {
         seqInst->executer();
     } while (!condition->executer());
     return 0;
+}
+
+void NoeudInstRepeter::traduitCpp(unsigned int ind, ostream& out) {
+    out << "do {" << endl;
+    seqInst->traduitCpp(ind + 1, out);
+    indent(ind, out);
+    out << "} while (!(";
+    condition->traduitCpp(ind, out);
+    out << "));" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -179,6 +255,22 @@ int NoeudInstPour::executer() {
         }
     }
     return 0;
+}
+
+void NoeudInstPour::traduitCpp(unsigned int ind, ostream& out) {
+    out << "for (";
+    if (affect1)
+        affect1->traduitCpp(ind, out);
+    out << ";";
+
+    condition->traduitCpp(ind, out);
+    out << ";";
+    if (affect2)
+        affect2->traduitCpp(ind, out);
+    out << ") {" << endl;
+    seqInst->traduitCpp(ind + 1, out);
+    indent(ind, out);
+    out << "}" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -225,6 +317,15 @@ int NoeudInstEcrire::executer() {
     return 0;
 }
 
+void NoeudInstEcrire::traduitCpp(unsigned int ind, ostream& out) {
+    out << "cout";
+    for (auto exp : exps) {
+        out << " << ";
+        exp->traduitCpp(ind, out);
+    }
+    out << ";";
+}
+
 void NoeudInstEcrire::ajoute(Noeud* instruction) {
     exps.push_back(instruction);
 }
@@ -236,16 +337,32 @@ NoeudInstLire::NoeudInstLire(Noeud* var) {
 }
 
 int NoeudInstLire::executer() {
-    string red;
+    string sred;
+    int ired;
     for (unsigned int i = 0; i < vars.size(); ++i) {
-        cin >> red;
-        red = '"' + red + '"'; // to make a string !!
-
+        cin >> sred;
         // Ignore to the end of line
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        ((SymboleValue*) vars.at(i))->setValeur(red);
+        Symbole s(sred);
+
+        if (s == "<ENTIER>") {
+            ired = atoi(s.getChaine().c_str());
+            ((SymboleValue*) vars.at(i))->setValeur(ired);
+        } else {
+            sred = '"' + sred + '"'; // to make a string !!
+            ((SymboleValue*) vars.at(i))->setValeur(sred);
+        }
+
     }
     return 0;
+}
+void NoeudInstLire::traduitCpp(unsigned int ind, ostream& out) {
+    out << "cin";
+    for (auto exp : vars) {
+        out << " >> ";
+        exp->traduitCpp(ind, out);
+    }
+    out << ";";
 }
 
 void NoeudInstLire::ajoute(Noeud* var) {

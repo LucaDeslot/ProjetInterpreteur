@@ -1,8 +1,10 @@
 #include "SymboleValue.h"
 #include "Exceptions.h"
-#include <typeinfo>
 
 #include <stdlib.h>
+#include <algorithm>
+#include <iomanip>
+#include <iterator>
 #include <string>
 
 SymboleValue::SymboleValue(Symbole const & s) :
@@ -27,6 +29,20 @@ int SymboleValue::executer() {
     if (type != VarType::INTEGER)
         throw IndefiniException(); // on lève une exception si valeur non définie
     return m_valeur;
+}
+
+void SymboleValue::traduitCpp(unsigned int ind, ostream& out) {
+    if (*this == "<VARIABLE>" && !estDefini()) {
+        out << setw(ind * 4) << "";
+        if (type == VarType::STRING) {
+            out << "string ";
+        } else {
+            out << "int ";
+        }
+        out << getChaine() << ";";
+    } else {
+        out << getChaine();
+    }
 }
 
 ostream & operator<<(ostream & cout, SymboleValue const & symbole) {
