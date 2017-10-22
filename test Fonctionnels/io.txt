@@ -1,0 +1,19 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12;
+  str = "test string";
+  
+  j = 0;
+  strInput = "";
+  
+  ecrire("donnez un nombre comme ", i, " : ");
+  lire(j);
+  ecrire("Vous avez entré : ", j);
+  
+  ecrire("\ndonnez une chaine comme '", str, "' : ");
+  lire(strInput);
+  ecrire("Vous avez entré : ", strInput);
+  
+finproc
+# Commentaire Final

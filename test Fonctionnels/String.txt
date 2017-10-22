@@ -1,0 +1,16 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12+3;
+  # variable string !
+  j="";
+  si (i>14)
+    # affectation string 
+    j="Superieur à 14"; 
+  finsi
+  
+  # ecrire des string et des VARIABLE String
+  ecrire("Hello", "World ", i, " est ", j);
+  
+finproc
+# Commentaire Final

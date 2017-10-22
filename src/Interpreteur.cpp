@@ -13,6 +13,9 @@ Interpreteur::Interpreteur(ifstream & fichier) :
 
 void Interpreteur::analyse() {
     m_arbre = programme(); // on lance l'analyse de la première règle
+    if (m_arbre == nullptr) {
+        throw SyntaxeException();
+    }
 }
 
 void Interpreteur::tester(string const & symboleAttendu) const throw (SyntaxeException) {

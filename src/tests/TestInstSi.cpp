@@ -103,10 +103,9 @@ void TestInstSi::testSyntaxIncorrect() {
 
     //------------------------------------------------------
     // ------------------Analyse et execution
-    try {
-        interpreteurEffect.analyse();
-    } catch (exception e) {
-    }
-    CPPUNIT_ASSERT_MESSAGE("Analyse de la syntaxe erreur",
+    CPPUNIT_ASSERT_THROW_MESSAGE("Analyse syntax avec erreur exception lancée",
+            interpreteurEffect.analyse(),
+            SyntaxeException);
+    CPPUNIT_ASSERT_MESSAGE("Analyse de la syntaxe erreur arbre null",
             interpreteurEffect.getArbre() == nullptr);
 }
