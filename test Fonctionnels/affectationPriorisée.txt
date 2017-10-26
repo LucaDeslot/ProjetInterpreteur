@@ -5,7 +5,7 @@ procedure principale()
   j = 12 - 3 / 3; # 11 (pas 3)
   k = 12 / 4 + 1; # 4 (et 4)
   l = 2 + 12 * 3 / 4; # 11 (pas 10)
-  m = 1 - 12 et 3; # faux : 0 (et pas 1 : vrai)
+  m = 12 * 3 / 7;
   n = 1 et 1 ou 0 et 0; # vrai : 1 (et pas 0 : faux)
 finproc
 # Commentaire Final
