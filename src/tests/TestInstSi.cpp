@@ -66,7 +66,7 @@ void TestInstSi::testSyntaxCorrect() {
 
     //------------------------------------------------------
     // ------------------Resultats
-    TableSymboles tb = const_cast<TableSymboles&>(interpreteurEffect.getTable());
+    TableSymboles tb = const_cast<TableSymboles&>(interpreteurEffect.getTable()); // do not do this, but it's just for testing and get values
     SymboleValue* symb = nullptr;
 
     //------------------------------------------------------

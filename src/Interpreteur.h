@@ -35,9 +35,16 @@ private:
     Noeud* seqInst();	   //     <seqInst> ::= <inst> { <inst> }
     Noeud* inst();	       //        <inst> ::= <affectation> ; | <instSi>
     Noeud* affectation(); // <affectation> ::= <variable> = <expression>
-    Noeud* expression();  //  <expression> ::= <facteur> { <opBinaire> <facteur> }
-    Noeud* facteur(); //     <facteur> ::= <entier>  |  <variable>  |  - <facteur>  | non <facteur> | ( <expression> )
-                      //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
+
+    Noeud* expression();  // <terme> { + <terme> | - <terme> }
+    Noeud* terme(); // <facteur> { * <facteur> | / <facteur> }
+    Noeud* facteur(); // <entier> | <variable> | - <expBool> | non <expBool> | ( <expBool> )
+    Noeud* expBool(); // <relationET> { ou <relationEt> }
+    Noeud* relationEt(); // <relation> { et <relation> }
+    Noeud* relation();  // <expression> { <opRel> <expression> }
+    Noeud* opRel();  // == | != | < | <= | > | >=
+
+
     Noeud* instSi();      //      <instSi> ::= si ( <expression> ) <seqInst> finsi
 
     /**
@@ -73,12 +80,12 @@ private:
     Noeud* instLire();
 
     // outils pour simplifier l'analyse syntaxique
-    void tester(string const & symboleAttendu) const throw (SyntaxeException); // Si symbole courant != symboleAttendu, on lève une exception
-    void testerEtAvancer(string const & symboleAttendu) throw (SyntaxeException); // Si symbole courant != symboleAttendu, on lève une exception, sinon on avance
-    void erreur(string const & mess) const throw (SyntaxeException);
+    void tester(string const & symboleAttendu) const noexcept(false); // Si symbole courant != symboleAttendu, on lève une exception
+    void testerEtAvancer(string const & symboleAttendu) noexcept(false); // Si symbole courant != symboleAttendu, on lève une exception, sinon on avance
+    void erreur(string const & mess) const noexcept(false);
     // Lève une exception "contenant" le message mess
 
-    bool isInst(Symbole symb);
+    bool isInst(Symbole symb) const;
 
 };
 
