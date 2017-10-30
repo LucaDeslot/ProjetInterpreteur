@@ -80,7 +80,7 @@ void Interpreteur::traduitCpp(unsigned int ind, ostream& out)
 bool Interpreteur::isInst(Symbole symb) const
 {
   return symb == "<VARIABLE>" || symb == "si" || symb == "tantque" || symb == "repeter"
-      || symb == "pour" || symb == "ecrire" || symb == "lire";
+      || symb == "pour" || symb == "ecrire" || symb == "lire" || symb == "selon";
 }
 
 Noeud* Interpreteur::programme()
@@ -91,7 +91,23 @@ Noeud* Interpreteur::programme()
   testerEtAvancer("(");
   testerEtAvancer(")");
   Noeud* sequence = seqInst();
-  testerEtAvancer("finproc");
+  try
+  {
+    testerEtAvancer("finproc");
+  } catch (exception& e)
+  {
+    cerr << e.what() << endl << endl;
+
+    while (m_lecteur.getSymbole() != "<FINDEFICHIER>" && m_lecteur.getSymbole() != "finproc")
+    {
+      while (m_lecteur.getSymbole() != "<FINDEFICHIER>" && !isInst(m_lecteur.getSymbole()))
+      {
+        m_lecteur.avancer();
+      }
+      seqInst();
+    }
+    testerEtAvancer("finproc");
+  }
   tester("<FINDEFICHIER>");
   return sequence;
 }
@@ -157,6 +173,10 @@ Noeud* Interpreteur::inst()
     {
       return instLire();
     }
+    else if (m_lecteur.getSymbole() == "selon")
+    {
+      return instSelon();
+    }
     else
     {
       erreur("Instruction incorrecte");
@@ -166,7 +186,6 @@ Noeud* Interpreteur::inst()
     cerr << e.what() << endl << endl;
     while (m_lecteur.getSymbole() != "<FINDEFICHIER>" && !isInst(m_lecteur.getSymbole()))
     {
-//            cout << m_lecteur.getColonne() << " " << m_lecteur.getSymbole() << endl;
       m_lecteur.avancer();
     }
   }
@@ -444,5 +463,45 @@ Noeud* Interpreteur::instLire()
   testerEtAvancer(")");
   testerEtAvancer(";");
   return instLire;
+}
+
+/**
+ * <instSelon>::= selon ( <variable> ) cas <ENTIER> : <seqInst> { cas <ENTIER> : <seqInst> } [defaut : <seqInst>] finselon
+ * @return
+ */
+Noeud* Interpreteur::instSelon()
+{
+  testerEtAvancer("selon");
+  testerEtAvancer("(");
+  tester("<VARIABLE>");
+  Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole());
+  m_lecteur.avancer();
+  testerEtAvancer(")");
+  Noeud* instSel = new NoeudInstSelon();
+  do
+  {
+    // pour chaque cas
+    testerEtAvancer("cas");
+    tester("<ENTIER>");
+    // on ajoute le nombre correspondant
+    Noeud* curNum = m_table.chercheAjoute(m_lecteur.getSymbole());
+    instSel->ajoute(
+        new NoeudOperateurBinaire(Symbole("=="), var, curNum));
+    m_lecteur.avancer();
+    testerEtAvancer(":");
+
+    // on ajoute les instructions
+    instSel->ajoute(seqInst());
+  } while (m_lecteur.getSymbole() == "cas");
+
+  // si il y a un cas defaut
+  if (m_lecteur.getSymbole() == "defaut")
+  {
+    testerEtAvancer("defaut");
+    testerEtAvancer(":");
+    instSel->ajoute(seqInst());     // On mémorise la séquence d'instruction
+  }
+  testerEtAvancer("finselon");
+  return instSel;
 }
 

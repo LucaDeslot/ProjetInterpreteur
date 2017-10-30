@@ -79,6 +79,7 @@ class NoeudInstSi: public Noeud {
 // Classe pour représenter un noeud "instruction si"
 //  et ses 2 fils : la condition du si et la séquence d'instruction associée
 public:
+  NoeudInstSi() = default;
     NoeudInstSi(Noeud* condition, Noeud* sequence);
     // Construit une "instruction si" avec sa condition et sa séquence d'instruction
     ~NoeudInstSi() {
@@ -162,4 +163,9 @@ private:
     vector<Noeud*> vars;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+class NoeudInstSelon : public NoeudInstSi
+{
+  // on pourrait redefinir le traduitCpp pour faire un case et pas un if
+};
 #endif /* ARBREABSTRAIT_H */

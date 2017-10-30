@@ -47,39 +47,46 @@ private:
   Noeud* relation();  // <expression> { <opRel> <expression> }
   bool opRel();  // == | != | < | <= | > | >=
 
-  Noeud* instSi();      //      <instSi> ::= si ( <expression> ) <seqInst> finsi
+  Noeud* instSi(); //      <instSi> ::= si ( <expBool> ) <seqInst> { sinonsi ( <expBool> ) <seqInst> } [sinon <seqInst>] finsi
+
 
   /**
-   * <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque
+   * <instTantQue> ::= tantque ( <expBool> ) <seqInst> fintantque
    * @return the node of tantQue
    */
   Noeud* instTantQue();
 
   /**
-   * <instRepeter> ::= repeter <seqInst> jusqua ( <expression> )
+   * <instRepeter> ::= repeter <seqInst> jusqua ( <expBool> )
    * @return
    */
-
   Noeud* instRepeter();
+
   /**
-   *<instPour> ::= pour ( [ <affectation> ] ; <expression> ; [ <affectation> ] ) <seqInst> finpour
+   *<instPour> ::= pour ( [ <affectation> ] ; <expBool> ; [ <affectation> ] ) <seqInst> finpour
    * @return
    */
-
   Noeud* instPour();
+
   /**
-   * <instEcrire> ::= ecrire ( <expression> | <chaine> { , <expression> | <chaine> } )
+   * <instEcrire> ::= ecrire ( <expBool> | <chaine> { , <expBool> | <chaine> } )
    * @return
    */
-
   Noeud* instEcrire();
+
   /**
    * <instLire>::= lire ( <variable> { , <variable> } )
    *
    * @return
    */
-
   Noeud* instLire();
+
+  /**
+   * <instSelon>::= selon ( <variable> ) cas <INTEGER> : <seqInst> { cas <INTEGER> : <seqInst> } [defaut : <seqInst>] finselon
+   * @return
+   */
+  Noeud* instSelon();
+
 
   // outils pour simplifier l'analyse syntaxique
   void tester(string const & symboleAttendu) const noexcept(false); // Si symbole courant != symboleAttendu, on lève une exception
