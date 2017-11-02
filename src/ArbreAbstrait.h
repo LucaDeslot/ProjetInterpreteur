@@ -34,9 +34,9 @@ public:
     NoeudSeqInst();   // Construit une séquence d'instruction vide
     ~NoeudSeqInst() {
     } // A cause du destructeur virtuel de la classe Noeud
-    int executer();    // Exécute chaque instruction de la séquence
+	int executer() override;    // Exécute chaque instruction de la séquence
     void traduitCpp(unsigned int ind, ostream& out = cout) override;
-    void ajoute(Noeud* instruction);  // Ajoute une instruction à la séquence
+	void ajoute(Noeud* instruction) override;  // Ajoute une instruction à la séquence
 
 private:
     vector<Noeud *> m_instructions; // pour stocker les instructions de la séquence
@@ -50,7 +50,7 @@ public:
     NoeudAffectation(Noeud* variable, Noeud* expression); // construit une affectation
     ~NoeudAffectation() {
     } // A cause du destructeur virtuel de la classe Noeud
-    int executer();        // Exécute (évalue) l'expression et affecte sa valeur à la variable
+	int executer() override; // Exécute (évalue) l'expression et affecte sa valeur à la variable
     void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     Noeud* m_variable;
@@ -66,7 +66,7 @@ public:
     // Construit une opération binaire : operandeGauche operateur OperandeDroit
     ~NoeudOperateurBinaire() {
     } // A cause du destructeur virtuel de la classe Noeud
-    int executer();            // Exécute (évalue) l'opération binaire)
+	int executer() override;            // Exécute (évalue) l'opération binaire)
     void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     Symbole m_operateur;
@@ -85,7 +85,7 @@ public:
     ~NoeudInstSi() {
     } // A cause du destructeur virtuel de la classe Noeud
     void ajoute(Noeud* instruction) override;
-    int executer();  // Exécute l'instruction si : si condition vraie on exécute la séquence
+	int executer() override; // Exécute l'instruction si : si condition vraie on exécute la séquence
     void traduitCpp(unsigned int ind, ostream& out = cout) override;
 private:
     /**

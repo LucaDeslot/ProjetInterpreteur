@@ -8,7 +8,7 @@
 #ifndef EXCEPTIONS_H
 #define	EXCEPTIONS_H
 
-#include <bits/exception.h>
+#include <exception>
 #include <sstream>
 #include <string>
 
@@ -17,7 +17,7 @@ using namespace std;
 class InterpreteurException: public exception {
 public:
     char const * what() const throw () {
-        return "Exception Interpreteur";
+		return "Exception Interpreteur";
     }
 };
 

@@ -19,7 +19,7 @@ public:
     SymboleValue(Symbole const & s); // Construit un symbole valué à partir d'un symbole existant s
     ~SymboleValue() {
     }
-    int executer();         // exécute le SymboleValue (revoie sa valeur !)
+	int executer() override;         // exécute le SymboleValue (revoie sa valeur !)
     void traduitCpp(unsigned int ind, ostream& out = cout) override;
 
     string getString() const;

@@ -160,6 +160,7 @@ int NoeudInstSi::executer() {
 void NoeudInstSi::traduitCpp(unsigned int ind, ostream& out) {
     unsigned var = 0;
     for (var = 0; var < conditions.size(); ++var) {
+		// si c'est le premier si (if) alors on on met "if (" sinon "else " + "if"
         out << (var == 0 ? "" : "else ") << "if (";
         conditions.at(var)->traduitCpp(ind, out);
         out << ") {" << endl;
@@ -298,7 +299,7 @@ int NoeudInstEcrire::executer() {
                             case 't':
                                 cout << '\t';
                                 break;
-                            case '"':
+						case '"':
                                 cout << '\"';
                                 break;
                             default:
