@@ -46,7 +46,7 @@ void TestInstSi::tearDown() {
 }
 
 void TestInstSi::testSyntaxCorrect() {
-    int const IVAL = 12;
+  int const IVAL = 10;
     int const JVAL = 2;
     string const KVAL = "\"testOk\"";
 
@@ -71,21 +71,21 @@ void TestInstSi::testSyntaxCorrect() {
 
     //------------------------------------------------------
     // ------------------variable i
-    symb = tb.cherche(Symbole(to_string(IVAL)));
+  symb = tb.cherche(Symbole("i"));
     CPPUNIT_ASSERT_MESSAGE("IVAL existe ?", symb);
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("i==12 ?", IVAL, symb->executer());
+  CPPUNIT_ASSERT_EQUAL_MESSAGE("i==10 ?", IVAL, symb->executer());
 
     //------------------------------------------------------
     // ------------------si avec variable j
-    symb = tb.cherche(Symbole(to_string(JVAL)));
+  symb = tb.cherche(Symbole("j"));
     CPPUNIT_ASSERT_MESSAGE("JVAL existe ?", symb);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("j==2 ?", JVAL, symb->executer());
 
     //------------------------------------------------------
     // ------------------si avec variable k (string)
-    symb = tb.cherche(Symbole(KVAL));
+  symb = tb.cherche(Symbole("k"));
     CPPUNIT_ASSERT_MESSAGE("KVAL existe ?", symb);
 
     CPPUNIT_ASSERT_ASSERTION_PASS_MESSAGE("k==testOk ?", KVAL == symb->getString());
