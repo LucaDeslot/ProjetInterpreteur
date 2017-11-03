@@ -28,24 +28,39 @@ TestInstSi::TestInstSi() :
 TestInstSi::~TestInstSi()
 {
 }
+/**
+ * takes file in upfolder "here"
+ * @param fileS the file to takes
+ */
+void takeFile(string fileS)
+{
+  fstream dDist("../" + fileS, ios::in);
+  fstream f(fileS);
+  if (!dDist.good() && !f.good())
+  {
+    throw FichierException("motsCles.txt");
+  }
+  else if (dDist.good())
+  {
+    f.open(fileS, ios::out);
+    f << dDist.rdbuf();
+  }
+  f.close();
+  dDist.close();
+}
 
 void TestInstSi::setUp()
 {
   // To take the file motsCles.txt to perform correctly the execution
-  fstream motCDist("../motsCles.txt", ios::in);
-  fstream motC("motsCles.txt");
-  if (!motCDist.good() && !motC.good())
-  {
-    throw FichierException("motsCles.txt");
-  }
-  else if (motCDist.good())
-  {
-    motC.open("motsCles.txt", ios::out);
-    motC << motCDist.rdbuf();
-  }
-  motC.close();
-  motCDist.close();
+  takeFile("motsCles.txt");
   //-----------------------
+  // To take the file testSi.txt to perform correctly the execution
+  takeFile(fileOk);
+  //-----------------------
+  // To take the file testSiError.txt to perform correctly the execution
+  takeFile(fileError);
+  //-----------------------
+
 }
 
 void TestInstSi::tearDown()
