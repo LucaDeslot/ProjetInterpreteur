@@ -5,6 +5,11 @@
 #include <string>
 #include <typeinfo>
 
+/**
+ *
+ * @param ind le nombre d'indetation
+ * @param out la où ecrire
+ */
 void indent(unsigned int ind, ostream &out) {
     out << setw(ind * 4) << "";
 }
@@ -147,8 +152,10 @@ NoeudInstSi::NoeudInstSi(Noeud* condition, Noeud* sequence) {
 
 int NoeudInstSi::executer() {
     unsigned var = 0;
+  // looking for a condition that is true
     for (var = 0; var < conditions.size() && !conditions.at(var)->executer(); ++var) {
     }
+  // we check if the condition is found
     if (var < conditions.size() && conditions.at(var)->executer()) // si une condition a été remplie (et on la retest : useless)
         seqIntructions.at(var)->executer();
     else if (seqIntructions.size() > conditions.size()) { // sinon, on regarde si il y a un "sinon"
