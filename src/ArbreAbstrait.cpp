@@ -135,7 +135,9 @@ void NoeudOperateurBinaire::traduitCpp(unsigned int ind, ostream& out) {
         m_operandeGauche->traduitCpp(ind, out); // On évalue l'opérande gauche
 
 //    out << setw(ind) << "";
-    out << " " << m_operateur.getChaine() << " ";
+	out << " ";
+	m_operateur.traduitCpp(0, out);
+	out << " ";
 
     if (m_operandeDroit != nullptr)
         m_operandeDroit->traduitCpp(ind, out);
@@ -345,20 +347,20 @@ NoeudInstLire::NoeudInstLire(Noeud* var) {
 }
 
 int NoeudInstLire::executer() {
-    string sred;
-    int ired;
+	string sread;
+	int iread;
     for (unsigned int i = 0; i < vars.size(); ++i) {
-        cin >> sred;
+		cin >> sread;
         // Ignore to the end of line
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        Symbole s(sred);
+		Symbole s(sread);
 
         if (s == "<ENTIER>") {
-            ired = atoi(s.getChaine().c_str());
-            ((SymboleValue*) vars.at(i))->setValeur(ired);
+			iread = atoi(s.getChaine().c_str());
+			((SymboleValue*) vars.at(i))->setValeur(iread);
         } else {
-            sred = '"' + sred + '"'; // to make a string !!
-            ((SymboleValue*) vars.at(i))->setValeur(sred);
+			sread = '"' + sread + '"'; // to make a string !!
+			((SymboleValue*) vars.at(i))->setValeur(sread);
         }
 
     }

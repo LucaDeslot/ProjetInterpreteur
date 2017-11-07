@@ -14,6 +14,17 @@ public:
     inline bool operator !=(string const & ch) const {
         return !(*this == ch);
     } // Pour tester la différence...
+	inline void traduitCpp(unsigned int ind, ostream& out = cout) {
+		string symb;
+		if (getChaine() == "et") {
+			symb = "and";
+		} else if (getChaine() == "ou") {
+			symb = "or";
+		} else {
+			symb = getChaine();
+		}
+		out << symb;
+	}
     inline string const & getChaine() const {
         return m_chaine;
     } // Accesseur

@@ -3,7 +3,8 @@
 procedure principale()
   i = 12+3;
   j=0;
-  delez = "Hey";
+  delez = "Succès";
+  ecrire("affectation string : ",delez);
   si (i==12)
     i=10;
   sinonsi (i==13)
@@ -16,20 +17,31 @@ procedure principale()
     ecrire(i, "\n");
   finpour
   
+    ecrire("Entrer un entier : ");
+    lire(j);
   tantque (i<15)
     i=i+1;
-    ecrire("Entrer j : ");
-    lire(j);
+    j=i-1;
     ecrire("j = ",j, "\n");
   fintantque
   
   i=10;
   
+  ecrire("Entrer quelque chose : ");
+  lire(delez);
+  ecrire("Ce quelque chose est : ", delez, "\n");
   repeter
     i=i+1;
-    ecrire("Entrer j : ");
-    lire(j);
+    j=j+1;
     ecrire("i+1 = ", i+1, " j = ",j, "\n");
   jusqua (i>=15)
+  
+   i = 12 + 3 * 2; # 18 (pas 30)
+  j = 12 - 3 / 3; # 11 (pas 3)
+  k = 12 / 4 + 1; # 4 (et 4)
+  l = 2 + 12 * 3 / 4; # 11 (pas 10)
+  m = 12 * 3 / 7;
+  n = 1 et 1 ou 0 et 0; # vrai : 1 (et pas 0 : faux)
+  
 finproc
 # Commentaire Final

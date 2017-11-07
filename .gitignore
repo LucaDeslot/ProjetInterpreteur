@@ -39,6 +39,7 @@ latex
 *.exe
 *.out
 *.app
+
 /Debug/*
 /Testing/*
 !/Debug/*.mk
