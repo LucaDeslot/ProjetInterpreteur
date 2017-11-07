@@ -7,10 +7,10 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-using namespace std;
-
 #include "Symbole.h"
 #include "Exceptions.h"
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 class Noeud {
@@ -39,7 +39,7 @@ public:
 	void ajoute(Noeud* instruction) override;  // Ajoute une instruction à la séquence
 
 private:
-    vector<Noeud *> m_instructions; // pour stocker les instructions de la séquence
+  vector<Noeud *> m_instructions; // pour stocker les instructions de la séquenceArbreAbstrait
 };
 
 ////////////////////////////////////////////////////////////////////////////////

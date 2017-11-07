@@ -1,0 +1,11 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12 + 3 * 2; # 18 (pas 30)
+  j = 12 - 3 / 3; # 11 (pas 3)
+  k = 12 / 4 + 1; # 4 (et 4)
+  l = 2 + 12 * 3 / 4; # 11 (pas 10)
+  m = 12 * 3 / 7;
+  n = 1 et 1 ou 0 et 0; # vrai : 1 (et pas 0 : faux)
+finproc
+# Commentaire Final

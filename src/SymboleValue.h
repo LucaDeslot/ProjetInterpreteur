@@ -3,11 +3,11 @@
 
 #include <string.h>
 #include <iostream>
-using namespace std;
 
 #include "Symbole.h"
 #include "ArbreAbstrait.h"
 
+using namespace std;
 
 
 class SymboleValue: public Symbole, // Un symbole valué est un symbole qui a une valeur (définie ou pas)
